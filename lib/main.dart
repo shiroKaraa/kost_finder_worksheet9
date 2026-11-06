@@ -1,12 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'app_keys.dart';
+import 'firebase_options.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 import 'services/auth_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // CATATAN KEAMANAN:
   // anonKey (publishable key) di bawah ini AMAN ditanam di aplikasi klien.
@@ -16,7 +22,7 @@ Future<void> main() async {
   // Yang TIDAK BOLEH ada di aplikasi Flutter adalah service_role key / secret key,
   // karena kunci tersebut melewati RLS dan membocorkan seluruh data.
   await Supabase.initialize(
-    url: 'https://uovjjhtutaljzalqjufa.supabase.co/',
+    url: 'https://uovjjhtutaljzalqjufa.supabase.co',
     anonKey: 'sb_publishable_R2DIWN4xm7MPKExAefmEuQ_PsYsOHF7',
   );
 

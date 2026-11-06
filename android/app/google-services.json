@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "55699221095",
+    "project_id": "kostfinder-83596",
+    "storage_bucket": "kostfinder-83596.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55699221095:android:19030e12689499397c82c2",
+        "android_client_info": {
+          "package_name": "com.example.kost_finder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIWKriBwrbUIQZhmVEeOiqchQ4d9JkcEU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

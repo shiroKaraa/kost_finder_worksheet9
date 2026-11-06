@@ -13,8 +13,14 @@ class AuthService {
   Future<AuthResponse> register({
     required String email,
     required String password,
+    String name = '',
+    String role = 'pengguna',
   }) {
-    return _client.auth.signUp(email: email, password: password);
+    return _client.auth.signUp(
+      email: email,
+      password: password,
+      data: {'name': name, 'role': role},
+    );
   }
 
   Future<AuthResponse> login({

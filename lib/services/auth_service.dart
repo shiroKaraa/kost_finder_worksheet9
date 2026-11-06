@@ -23,4 +23,7 @@ class AuthService {
   }) {
     return _client.auth.signInWithPassword(email: email, password: password);
   }
+
+  Future<void> logout() => _client.auth.signOut();
+
 }

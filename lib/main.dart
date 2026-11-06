@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'pages/login_page.dart'; 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,14 +28,7 @@ class KostFinderApp extends StatelessWidget {
     return MaterialApp(
       title: 'Kost Finder',
       theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'Kost Finder - Setup Berhasil!',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
+      home: const LoginPage(),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/auth_service.dart';
 import '../services/kos_service.dart';
 import '../services/profile_service.dart';
+import '../services/notification_service.dart';
 import '../widgets/role_guard.dart';
 import 'login_page.dart';
 
@@ -16,12 +17,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Future<UserProfile?> _profileFuture;
   late Future<List<Map<String, dynamic>>> _kosFuture;
+  bool _notifInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _profileFuture = ProfileService().getMyProfile();
     _kosFuture = KosService().fetchAll();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_notifInitialized) {
+        _notifInitialized = true;
+        NotificationService.instance.init();
+      }
+    });
   }
 
   void _refreshKos() {

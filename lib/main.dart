@@ -41,6 +41,8 @@ Future<void> main() async {
     }
   });
 
+  NotificationService.instance.setupInteractedMessage();
+
   runApp(const KostFinderApp());
 }
 

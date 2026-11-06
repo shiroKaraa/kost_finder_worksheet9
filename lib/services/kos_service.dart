@@ -13,6 +13,15 @@ class KosService {
     return List<Map<String, dynamic>>.from(data);
   }
 
+  Future<Map<String, dynamic>?> fetchById(String id) async {
+    try {
+      final data = await _client.from('kos').select().eq('id', id).maybeSingle();
+      return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> add({
     required String name,
     required String address,

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../app_keys.dart';
+import '../pages/kos_detail_page.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -56,6 +57,23 @@ class NotificationService {
     });
   }
 
+  Future<void> setupInteractedMessage() async {
+    final initial = await _messaging.getInitialMessage();
+    if (initial != null) _handleTap(initial);
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleTap);
+  }
+
+  void _handleTap(RemoteMessage message) {
+    final kosId = message.data['kos_id'];
+    if (kosId == null) return;
+
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => KosDetailPage(kosId: kosId.toString()),
+      ),
+    );
+  }
+
   Future<void> init() async {
     await requestPermission();
 
@@ -75,12 +93,26 @@ class NotificationService {
       debugPrint('title: ${message.notification?.title}');
       debugPrint('body : ${message.notification?.body}');
       debugPrint('data : ${message.data}');
-
       final title = message.notification?.title ?? 'Notifikasi';
       final body = message.notification?.body ?? '';
-      
+      final kosId = message.data['kos_id'];
+
       messengerKey.currentState?.showSnackBar(
-        SnackBar(content: Text('$title\n$body')),
+        SnackBar(
+          content: Text('$title\n$body'),
+          action: kosId != null
+              ? SnackBarAction(
+                  label: 'Lihat',
+                  onPressed: () {
+                    navigatorKey.currentState?.push(
+                      MaterialPageRoute(
+                        builder: (_) => KosDetailPage(kosId: kosId.toString()),
+                      ),
+                    );
+                  },
+                )
+              : null,
+        ),
       );
     });
   }

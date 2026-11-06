@@ -6,6 +6,7 @@ import '../services/profile_service.dart';
 import '../services/notification_service.dart';
 import '../widgets/role_guard.dart';
 import 'login_page.dart';
+import 'kos_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -180,64 +181,99 @@ class _HomePageState extends State<HomePage> {
                         Supabase.instance.client.auth.currentUser!.id;
 
                     return ListView.builder(
+                      padding: const EdgeInsets.all(8),
                       itemCount: items.length,
                       itemBuilder: (context, i) {
                         final kos = items[i];
                         final isMine = kos['owner_id'] == myId;
 
-                        return ListTile(
-                          title: Text(kos['name'] ?? '-'),
-                          subtitle: Text(
-                            '${kos['address'] ?? '-'} • Rp ${kos['price'] ?? 0}',
-                          ),
-                          trailing: isMine || p.isAdmin
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.edit),
-                                      onPressed: () {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Fitur edit belum diimplementasikan',
-                                            ),
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => KosDetailPage(kosId: kos['id']),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      color: Colors.indigo.shade100,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(Icons.home_work, color: Colors.indigo),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          kos['name'] ?? '-',
+                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          kos['address'] ?? '-',
+                                          style: const TextStyle(fontSize: 14, color: Colors.grey),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Rp ${kos['price'] ?? 0}',
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.indigo),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (isMine || p.isAdmin)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit, size: 20),
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(content: Text('Fitur edit belum diimplementasikan')),
+                                            );
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                                          onPressed: () async {
+                                            final res = await KosService().delete(kos['id']);
+                                            if (!res) {
+                                              if (!context.mounted) return;
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text('Gagal menghapus (RLS menolak)')),
+                                              );
+                                            } else {
+                                              _refreshKos();
+                                            }
+                                          },
+                                        ),
+                                        if (!isMine)
+                                          IconButton(
+                                            icon: const Icon(Icons.security, size: 20, color: Colors.orange),
+                                            tooltip: 'Uji RLS',
+                                            onPressed: () => _securityTest(kos['id']),
                                           ),
-                                        );
-                                      },
+                                      ],
                                     ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete),
-                                      onPressed: () async {
-                                        final res = await KosService()
-                                            .delete(kos['id']);
-                                        if (!res) {
-                                          if (!context.mounted) return;
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Gagal menghapus (RLS menolak)',
-                                              ),
-                                            ),
-                                          );
-                                        } else {
-                                          _refreshKos();
-                                        }
-                                      },
-                                    ),
-                                    if (!isMine)
-                                      IconButton(
-                                        icon: const Icon(Icons.security,
-                                            color: Colors.red),
-                                        tooltip: 'Uji RLS (Coba hack data ini)',
-                                        onPressed: () =>
-                                            _securityTest(kos['id']),
-                                      ),
-                                  ],
-                                )
-                              : null,
+                                ],
+                              ),
+                            ),
+                          ),
                         );
                       },
                     );
